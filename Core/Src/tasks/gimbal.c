@@ -87,6 +87,9 @@ static void Gimbal_ParseRCData()
 	TOOL_LIMIT(targetPitchAngle, CONFIG_GIMBAL_RC_PITCH_MIN_ANGLE, CONFIG_GIMBAL_RC_PITCH_MAX_ANGLE);
 }
 
+/**
+ * 云台任务
+ */
 static void Gimbal_Task()
 {
 	uint8_t calibrateFlag = 0;

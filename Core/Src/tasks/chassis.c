@@ -187,11 +187,11 @@ void Chassis_Init()
 	PID_CREATE_FROM_CONFIG(CHASSIS_RB, &wheelsSpeedPID[3]);
 	PID_CREATE_FROM_CONFIG(CHASSIS_FOLLOW, &chassisFollowPID);
 	static osThreadId_t chassisTaskHandle;
-	const osThreadAttr_t chassisTask_attributes = {
+	const osThreadAttr_t chassisTaskAttributes = {
 			.name = "chassisTask",
 			.priority = (osPriority_t) osPriorityHigh,
 			.stack_size = 128 * 4
 	};
-	chassisTaskHandle = osThreadNew(Chassis_Task, NULL, &chassisTask_attributes);
+	chassisTaskHandle = osThreadNew(Chassis_Task, NULL, &chassisTaskAttributes);
 	UNUSED(chassisTaskHandle);
 }

@@ -10,6 +10,7 @@
 #include "tasks/chassis.h"
 #include "tasks/global.h"
 #include "tasks/gimbal.h"
+#include "tasks/shoot.h"
 #include "Library/Inc/library.h"
 #include "Configurations/config.h"
 
@@ -21,4 +22,5 @@ void Entry_Task()
 	Global_Init();
 	Chassis_Init();
 	Gimbal_Init();
+	Shoot_Init();
 }
