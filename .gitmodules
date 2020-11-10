@@ -1,0 +1,3 @@
+[submodule "Library"]
+	path = Library
+	url = git@github.com:kinetic-robotics/hardware-library.git
