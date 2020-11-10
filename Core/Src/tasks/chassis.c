@@ -66,9 +66,9 @@ static void Chassis_SpeedCalc(float vx, float vy, float vw, int16_t speed[])
   int16_t wheelRPM[4];
   float max = 0;
 
-  TOOL_ABSLIMIT(vx, CONFIG_CHASSIS_MAX_VX_SPEED);  //mm/s
-  TOOL_ABSLIMIT(vy, CONFIG_CHASSIS_MAX_VY_SPEED);  //mm/s
-  TOOL_ABSLIMIT(vw, CONFIG_CHASSIS_MAX_VR_SPEED);  //deg/s
+  TOOL_ABS_LIMIT(vx, CONFIG_CHASSIS_MAX_VX_SPEED);  //mm/s
+  TOOL_ABS_LIMIT(vy, CONFIG_CHASSIS_MAX_VY_SPEED);  //mm/s
+  TOOL_ABS_LIMIT(vw, CONFIG_CHASSIS_MAX_VR_SPEED);  //deg/s
 
   wheelRPM[0] = (+vx - vy + vw * rotateRatioF) * wheelRPMRatio;
   wheelRPM[1] = (+vx + vy + vw * rotateRatioF) * wheelRPMRatio;
