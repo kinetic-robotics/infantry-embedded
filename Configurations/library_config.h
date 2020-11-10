@@ -37,6 +37,9 @@
 			{ canNum: CAN_1, id: 5, type: MOTOR_TYPE_RM6020 },\
 			{ canNum: CAN_2, id: 6, type: MOTOR_TYPE_RM6020 }\
 	};
+
+	/* CAN发送频率 */
+	#define CONFIG_MOTOR_CAN_HZ 100
 #endif
 
 #ifdef CONFIG_DRIVER_UART_ENABLE
@@ -134,6 +137,9 @@
 #ifdef CONFIG_CAPACITY_ENABLE
 	/* 超级电容挂载CAN编号 */
 	#define CONFIG_CAPACITY_CAN_NUM CAN_2
+
+	/* CAN发送频率 */
+	#define CONFIG_CAPACITY_HZ 10
 #endif
 
 #endif /* LIBRARY_CONFIG_H_ */
