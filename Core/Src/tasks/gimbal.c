@@ -87,6 +87,9 @@ static void Gimbal_ParseRCData()
 	TOOL_LIMIT(targetPitchAngle, CONFIG_GIMBAL_RC_PITCH_MIN_ANGLE, CONFIG_GIMBAL_RC_PITCH_MAX_ANGLE);
 }
 
+/**
+ * 云台任务
+ */
 static void Gimbal_Task()
 {
 	uint8_t calibrateFlag = 0;
@@ -148,8 +151,8 @@ static void Gimbal_Task()
 				break;
 		}
 		/* 发送指令给电调 */
-		Motor_Set(CONFIG_GIMBAL_MOTOR_YAW, motorsCurrent[CONFIG_GIMBAL_MOTOR_YAW]);
-		Motor_Set(CONFIG_GIMBAL_MOTOR_PITCH, motorsCurrent[CONFIG_GIMBAL_MOTOR_PITCH]);
+		Motor_Set(CONFIG_GIMBAL_MOTOR_YAW, motorsCurrent[GIMBAL_MOTOR_YAW]);
+		Motor_Set(CONFIG_GIMBAL_MOTOR_PITCH, motorsCurrent[GIMBAL_MOTOR_PITCH]);
 		osDelay(10);
 	}
 }
@@ -159,12 +162,16 @@ static void Gimbal_Task()
  */
 void Gimbal_Init()
 {
+
+	#ifndef CONFIG_GIMBAL_ENABLE
+		return;
+	#endif
 	/* 获取middlewares信息 */
 	rc = RC_GetData();
 	imu = IMU_GetData();
 	/* 获取电机信息 */
-	motors[CONFIG_GIMBAL_MOTOR_YAW] = Motor_GetMotorData(CONFIG_GIMBAL_MOTOR_YAW);
-	motors[CONFIG_GIMBAL_MOTOR_PITCH] = Motor_GetMotorData(CONFIG_GIMBAL_MOTOR_PITCH);
+	motors[GIMBAL_MOTOR_YAW] = Motor_GetMotorData(CONFIG_GIMBAL_MOTOR_YAW);
+	motors[GIMBAL_MOTOR_PITCH] = Motor_GetMotorData(CONFIG_GIMBAL_MOTOR_PITCH);
 	/* 设置PID */
 	PID_CREATE_FROM_CONFIG(GIMBAL_SPEED_YAW, &motorSpeedPID[GIMBAL_MOTOR_YAW]);
 	PID_CREATE_FROM_CONFIG(GIMBAL_SPEED_PITCH, &motorSpeedPID[GIMBAL_MOTOR_PITCH]);
@@ -174,9 +181,9 @@ void Gimbal_Init()
 	PID_CREATE_FROM_CONFIG(GIMBAL_CALIBRATE_PITCH, &motorCalibratePID[GIMBAL_MOTOR_PITCH]);
 	static osThreadId_t gimbalTaskHandle;
 	const osThreadAttr_t gimbalTask_attributes = {
-	    .name = "gimbalTask",
-	    .priority = (osPriority_t) osPriorityHigh,
-	    .stack_size = 128 * 4
+			.name = "gimbalTask",
+			.priority = (osPriority_t) osPriorityHigh,
+			.stack_size = 128 * 4
 	};
 	gimbalTaskHandle = osThreadNew(Gimbal_Task, NULL, &gimbalTask_attributes);
 	UNUSED(gimbalTaskHandle);

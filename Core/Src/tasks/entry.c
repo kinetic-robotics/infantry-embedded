@@ -10,7 +10,9 @@
 #include "tasks/chassis.h"
 #include "tasks/global.h"
 #include "tasks/gimbal.h"
+#include "tasks/shoot.h"
 #include "Library/Inc/library.h"
+#include "Configurations/config.h"
 
 /**
  * 启动任务
@@ -20,7 +22,5 @@ void Entry_Task()
 	Global_Init();
 	Chassis_Init();
 	Gimbal_Init();
-	while(1) {
-		osDelay(10);
-	}
+	Shoot_Init();
 }

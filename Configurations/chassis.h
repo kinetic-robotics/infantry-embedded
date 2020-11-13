@@ -8,6 +8,9 @@
 #ifndef CHASSIS_H_
 #define CHASSIS_H_
 
+/* 任务是否启用设置 */
+#define CONFIG_CHASSIS_ENABLE
+
 /* 底盘轮距(mm) */
 #define CONFIG_CHASSIS_WHEELTRACK     353
 /* 底盘轴距(mm) */

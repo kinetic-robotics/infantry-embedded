@@ -59,36 +59,36 @@ const RC_Info* rc; /* 遥控器信息 */
  */
 static void Chassis_SpeedCalc(float vx, float vy, float vw, int16_t speed[])
 {
-  static float rotateRatioF = ((CONFIG_CHASSIS_WHEELBASE + CONFIG_CHASSIS_WHEELTRACK)/2.0f - CONFIG_CHASSIS_GIMBAL_OFFSET)/TOOL_RADIAN_COEF;
-  static float rotateRatioB = ((CONFIG_CHASSIS_WHEELBASE + CONFIG_CHASSIS_WHEELTRACK)/2.0f + CONFIG_CHASSIS_GIMBAL_OFFSET)/TOOL_RADIAN_COEF;
-  static float wheelRPMRatio = 60.0f/(CONFIG_CHASSIS_PERIMETER * CONFIG_CHASSIS_DECELE_RATIO);
+	static float rotateRatioF = ((CONFIG_CHASSIS_WHEELBASE + CONFIG_CHASSIS_WHEELTRACK)/2.0f - CONFIG_CHASSIS_GIMBAL_OFFSET)/TOOL_RADIAN_COEF;
+	static float rotateRatioB = ((CONFIG_CHASSIS_WHEELBASE + CONFIG_CHASSIS_WHEELTRACK)/2.0f + CONFIG_CHASSIS_GIMBAL_OFFSET)/TOOL_RADIAN_COEF;
+	static float wheelRPMRatio = 60.0f/(CONFIG_CHASSIS_PERIMETER * CONFIG_CHASSIS_DECELE_RATIO);
 
-  int16_t wheelRPM[4];
-  float max = 0;
+	int16_t wheelRPM[4];
+	float max = 0;
 
-  TOOL_ABS_LIMIT(vx, CONFIG_CHASSIS_MAX_VX_SPEED);  //mm/s
-  TOOL_ABS_LIMIT(vy, CONFIG_CHASSIS_MAX_VY_SPEED);  //mm/s
-  TOOL_ABS_LIMIT(vw, CONFIG_CHASSIS_MAX_VR_SPEED);  //deg/s
+	TOOL_ABS_LIMIT(vx, CONFIG_CHASSIS_MAX_VX_SPEED);  //mm/s
+	TOOL_ABS_LIMIT(vy, CONFIG_CHASSIS_MAX_VY_SPEED);  //mm/s
+	TOOL_ABS_LIMIT(vw, CONFIG_CHASSIS_MAX_VR_SPEED);  //deg/s
 
-  wheelRPM[0] = (+vx - vy + vw * rotateRatioF) * wheelRPMRatio;
-  wheelRPM[1] = (+vx + vy + vw * rotateRatioF) * wheelRPMRatio;
-  wheelRPM[2] = (-vx + vy + vw * rotateRatioB) * wheelRPMRatio;
-  wheelRPM[3] = (-vx - vy + vw * rotateRatioB) * wheelRPMRatio;
+	wheelRPM[0] = (+vx - vy + vw * rotateRatioF) * wheelRPMRatio;
+  	wheelRPM[1] = (+vx + vy + vw * rotateRatioF) * wheelRPMRatio;
+  	wheelRPM[2] = (-vx + vy + vw * rotateRatioB) * wheelRPMRatio;
+  	wheelRPM[3] = (-vx - vy + vw * rotateRatioB) * wheelRPMRatio;
 
-  //find max item
-  for (size_t i = 0; i < 4; i++)
-  {
-    if (abs(wheelRPM[i]) > max)
-      max = abs(wheelRPM[i]);
-  }
-  //equal proportion
-  if (max > CONFIG_CHASSIS_MAX_WHEEL_RPM)
-  {
-    float rate = CONFIG_CHASSIS_MAX_WHEEL_RPM / max;
-    for (size_t i = 0; i < 4; i++)
-      wheelRPM[i] *= rate;
-  }
-  memcpy(speed, wheelRPM, 4*sizeof(int16_t));
+  	//find max item
+  	for (size_t i = 0; i < 4; i++) {
+  		if (abs(wheelRPM[i]) > max) {
+  			max = abs(wheelRPM[i]);
+  		}
+  	}
+  	//equal proportion
+  	if (max > CONFIG_CHASSIS_MAX_WHEEL_RPM) {
+  		float rate = CONFIG_CHASSIS_MAX_WHEEL_RPM / max;
+  		for (size_t i = 0; i < 4; i++) {
+  			wheelRPM[i] *= rate;
+  		}
+  	}
+  	memcpy(speed, wheelRPM, 4 * sizeof(int16_t));
 }
 
 /**
@@ -135,39 +135,39 @@ void Chassis_SetChassisFolloweYawEcd(uint32_t ecd)
  */
 static void Chassis_Task()
 {
-  int16_t motorsSpeedTarget[4]; /* 底盘电机期望转速(rpm) */
-  int16_t motorsCurrent[4]; /* 底盘电机电流 */
-  const uint8_t motorsID[4] = {
-		  CONFIG_CHASSIS_MOTOR_RF,
-		  CONFIG_CHASSIS_MOTOR_LF,
-		  CONFIG_CHASSIS_MOTOR_LB,
-		  CONFIG_CHASSIS_MOTOR_RB
-  };
-  const Motor_Info* motors[4];
-  /* 获取电机信息 */
-  for (size_t i = 0; i < 4; i++) {
-	  motors[i] = Motor_GetMotorData(motorsID[i]);
-  }
-  /* 获取遥控器信息 */
-  rc = RC_GetData();
-  yawMotor = Motor_GetMotorData(CONFIG_CHASSIS_MOTOR_GIMBAL_YAW);
-  while(1) {
-	/* 小陀螺,底盘跟随云台控制 */
-	Chassis_GimbalControl();
-    /* 底盘控制信号获取,遥控器对底盘的控制信息转化为标准单位，平移为(mm/s)旋转为(degree/s), 同时加入全局速度 */
-    float vx = rc->ch1 / RC_MAX_VALUE * CONFIG_CHASSIS_MAX_VX_SPEED + globalVx;         /* 底盘前后速度 */
-    float vy = rc->ch2 / RC_MAX_VALUE * CONFIG_CHASSIS_MAX_VY_SPEED + globalVy;         /* 底盘左右速度 */
-    float vw = rc->wheel / RC_WHEEL_MAX_VALUE * CONFIG_CHASSIS_MAX_VR_SPEED + globalVw; /* 底盘旋转速度 */
+	int16_t motorsSpeedTarget[4]; /* 底盘电机期望转速(rpm) */
+	int16_t motorsCurrent[4]; /* 底盘电机电流 */
+	const uint8_t motorsID[4] = {
+			CONFIG_CHASSIS_MOTOR_RF,
+			CONFIG_CHASSIS_MOTOR_LF,
+			CONFIG_CHASSIS_MOTOR_LB,
+			CONFIG_CHASSIS_MOTOR_RB
+	};
+	const Motor_Info* motors[4];
+	/* 获取电机信息 */
+	for (size_t i = 0; i < 4; i++) {
+		motors[i] = Motor_GetMotorData(motorsID[i]);
+	}
+	/* 获取遥控器信息 */
+	rc = RC_GetData();
+	yawMotor = Motor_GetMotorData(CONFIG_CHASSIS_MOTOR_GIMBAL_YAW);
+	while(1) {
+		/* 小陀螺,底盘跟随云台控制 */
+		Chassis_GimbalControl();
+		/* 底盘控制信号获取,遥控器对底盘的控制信息转化为标准单位，平移为(mm/s)旋转为(degree/s), 同时加入全局速度 */
+		float vx = rc->ch1 / RC_MAX_VALUE * CONFIG_CHASSIS_MAX_VX_SPEED + globalVx;         /* 底盘前后速度 */
+		float vy = rc->ch2 / RC_MAX_VALUE * CONFIG_CHASSIS_MAX_VY_SPEED + globalVy;         /* 底盘左右速度 */
+		float vw = rc->wheel / RC_WHEEL_MAX_VALUE * CONFIG_CHASSIS_MAX_VR_SPEED + globalVw; /* 底盘旋转速度 */
 
-    /* 底盘速度分解，计算底盘电机转速 */
-    Chassis_SpeedCalc(vx, vy, vw, motorsSpeedTarget);
+		/* 底盘速度分解，计算底盘电机转速 */
+		Chassis_SpeedCalc(vx, vy, vw, motorsSpeedTarget);
 
-    /* 闭环PID控制,并将计算好的电流值发送给电调 */
-    for (size_t i = 0; i < 4; i++) {
-      motorsCurrent[i] = PID_Calc(&wheelsSpeedPID[i], motors[i]->speedRpm, motorsSpeedTarget[i]);
-      Motor_Set(motorsID[i], motorsCurrent[i]);
-    }
-    osDelay(10);
+		/* 闭环PID控制,并将计算好的电流值发送给电调 */
+		for (size_t i = 0; i < 4; i++) {
+			motorsCurrent[i] = PID_Calc(&wheelsSpeedPID[i], motors[i]->speedRpm, motorsSpeedTarget[i]);
+			Motor_Set(motorsID[i], motorsCurrent[i]);
+		}
+		osDelay(10);
   }
 }
 
@@ -176,18 +176,22 @@ static void Chassis_Task()
  */
 void Chassis_Init()
 {
-  /* 初始化PID */
-  PID_CREATE_FROM_CONFIG(CHASSIS_RF, &wheelsSpeedPID[0]);
-  PID_CREATE_FROM_CONFIG(CHASSIS_LF, &wheelsSpeedPID[1]);
-  PID_CREATE_FROM_CONFIG(CHASSIS_LB, &wheelsSpeedPID[2]);
-  PID_CREATE_FROM_CONFIG(CHASSIS_RB, &wheelsSpeedPID[3]);
-  PID_CREATE_FROM_CONFIG(CHASSIS_FOLLOW, &chassisFollowPID);
-  static osThreadId_t chassisTaskHandle;
-  const osThreadAttr_t chassisTask_attributes = {
-    .name = "chassisTask",
-    .priority = (osPriority_t) osPriorityHigh,
-    .stack_size = 128 * 4
-  };
-  chassisTaskHandle = osThreadNew(Chassis_Task, NULL, &chassisTask_attributes);
-  UNUSED(chassisTaskHandle);
+  	#ifndef CONFIG_GIMBAL_ENABLE
+		return;
+  	#endif
+
+	/* 初始化PID */
+	PID_CREATE_FROM_CONFIG(CHASSIS_RF, &wheelsSpeedPID[0]);
+	PID_CREATE_FROM_CONFIG(CHASSIS_LF, &wheelsSpeedPID[1]);
+	PID_CREATE_FROM_CONFIG(CHASSIS_LB, &wheelsSpeedPID[2]);
+	PID_CREATE_FROM_CONFIG(CHASSIS_RB, &wheelsSpeedPID[3]);
+	PID_CREATE_FROM_CONFIG(CHASSIS_FOLLOW, &chassisFollowPID);
+	static osThreadId_t chassisTaskHandle;
+	const osThreadAttr_t chassisTaskAttributes = {
+			.name = "chassisTask",
+			.priority = (osPriority_t) osPriorityHigh,
+			.stack_size = 128 * 4
+	};
+	chassisTaskHandle = osThreadNew(Chassis_Task, NULL, &chassisTaskAttributes);
+	UNUSED(chassisTaskHandle);
 }

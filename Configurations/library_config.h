@@ -37,6 +37,9 @@
 			{ canNum: CAN_1, id: 5, type: MOTOR_TYPE_RM6020 },\
 			{ canNum: CAN_2, id: 6, type: MOTOR_TYPE_RM6020 }\
 	};
+
+	/* CAN发送频率 */
+	#define CONFIG_MOTOR_CAN_HZ 100
 #endif
 
 #ifdef CONFIG_DRIVER_UART_ENABLE
@@ -104,9 +107,9 @@
 
 	/* 恒温PID参数 */
 	#define CONFIG_PID_IMU_HEAT_P 1
-	#define CONFIG_PID_IMU_HEAT_I 1
+	#define CONFIG_PID_IMU_HEAT_I 10
 	#define CONFIG_PID_IMU_HEAT_D 0
-	#define CONFIG_PID_IMU_HEAT_MAX_OUTPUT 50
+	#define CONFIG_PID_IMU_HEAT_MAX_OUTPUT 70
 	#define CONFIG_PID_IMU_HEAT_INTERGRAL_LIMIT 50
 
 	/* 恒温设定温度 */
@@ -134,6 +137,9 @@
 #ifdef CONFIG_CAPACITY_ENABLE
 	/* 超级电容挂载CAN编号 */
 	#define CONFIG_CAPACITY_CAN_NUM CAN_2
+
+	/* CAN发送频率 */
+	#define CONFIG_CAPACITY_HZ 10
 #endif
 
 #endif /* LIBRARY_CONFIG_H_ */
