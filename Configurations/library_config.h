@@ -23,9 +23,32 @@
 #define CONFIG_DRIVER_SPI_ENABLE
 #define CONFIG_DRIVER_UART_ENABLE
 #define CONFIG_DRIVER_PWM_ENABLE
+#define CONFIG_REFEREE_ENABLE
 
 #include "Library/Inc/drivers/can.h"
 #include "Library/Inc/motor.h"
+
+/* CRC模块默认初始值 */
+/* CRC8默认初始值 */
+#define CONFIG_CRC_CRC8_DEFAULT_INIT_VALUE  0xFF
+
+/* CRC8默认初始值 */
+#define CONFIG_CRC_CRC16_DEFAULT_INIT_VALUE 0xFFFF
+
+#ifdef CONFIG_REFEREE_ENABLE
+	/* 裁判系统串口号 */
+	#define CONFIG_REFEREE_UART_ID 1
+
+	/* 裁判系统数据包最大长度 */
+	#define CONFIG_REFEREE_DATA_MAX_LENGTH 200
+
+	/* 裁判系统回调最大数量 */
+	#define CONFIG_REFEREE_CALLBACKS_MAX 16
+
+	/* 裁判系统队列深度 */
+	#define CONFIG_REFEREE_MSGS_LENGTH 2048
+
+#endif
 
 #ifdef CONFIG_MOTOR_ENABLE
 	/* 电机信息数组 */
@@ -44,14 +67,16 @@
 
 #ifdef CONFIG_DRIVER_UART_ENABLE
 	extern UART_HandleTypeDef huart1;
+	extern UART_HandleTypeDef huart3;
 
 	/* 串口配置, bufferLength不可大于UART_BUFFER_MAX_LENGTH */
 	#define CONFIG_UART_INFOS {\
-			{ huart: &huart1, bufferLength: 18 }\
+			{ huart: &huart1, bufferLength: 18 },\
+			{ huart: &huart3, bufferLength: 512 }\
 	};
 
 	/* 串口最大Buffer设置 */
-	#define CONFIG_UART_BUFFER_MAX_LENGTH 64
+	#define CONFIG_UART_BUFFER_MAX_LENGTH 512
 #endif
 
 #ifdef CONFIG_RC_ENABLE
