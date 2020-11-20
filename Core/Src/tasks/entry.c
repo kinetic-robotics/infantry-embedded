@@ -23,4 +23,6 @@ void Entry_Task()
 	Chassis_Init();
 	Gimbal_Init();
 	Shoot_Init();
+	/* 安全退出任务 */
+	vTaskDelete(NULL);
 }

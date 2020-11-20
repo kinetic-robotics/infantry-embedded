@@ -153,7 +153,7 @@ static void Gimbal_Task()
 		/* 发送指令给电调 */
 		Motor_Set(CONFIG_GIMBAL_MOTOR_YAW, motorsCurrent[GIMBAL_MOTOR_YAW]);
 		Motor_Set(CONFIG_GIMBAL_MOTOR_PITCH, motorsCurrent[GIMBAL_MOTOR_PITCH]);
-		osDelay(10);
+		osDelay(1);
 	}
 }
 
@@ -162,7 +162,6 @@ static void Gimbal_Task()
  */
 void Gimbal_Init()
 {
-
 	#ifndef CONFIG_GIMBAL_ENABLE
 		return;
 	#endif
