@@ -104,6 +104,7 @@ NVIC.TIM1_UP_TIM10_IRQn=true\:0\:0\:false\:false\:true\:false\:false\:true
 NVIC.TimeBase=TIM1_UP_TIM10_IRQn
 NVIC.TimeBaseIP=TIM1
 NVIC.USART1_IRQn=true\:5\:0\:false\:false\:true\:true\:true\:true
+NVIC.USART3_IRQn=true\:5\:0\:false\:false\:true\:true\:true\:true
 NVIC.UsageFault_IRQn=true\:0\:0\:false\:false\:true\:false\:false\:false
 PA13.Mode=Trace_Asynchronous_SW
 PA13.Signal=SYS_JTMS-SWDIO
