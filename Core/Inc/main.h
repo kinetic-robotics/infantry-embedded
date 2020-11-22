@@ -64,6 +64,8 @@ void Error_Handler(void);
 #define IMU_HEAT_POWER_GPIO_Port GPIOB
 #define POWER_1_Pin GPIO_PIN_2
 #define POWER_1_GPIO_Port GPIOH
+#define FRICTION1_CONTROL_Pin GPIO_PIN_8
+#define FRICTION1_CONTROL_GPIO_Port GPIOA
 #define POWER_2_Pin GPIO_PIN_3
 #define POWER_2_GPIO_Port GPIOH
 #define POWER_3_Pin GPIO_PIN_4
@@ -72,6 +74,8 @@ void Error_Handler(void);
 #define POWER_4_GPIO_Port GPIOH
 #define IMU_NSS_Pin GPIO_PIN_6
 #define IMU_NSS_GPIO_Port GPIOF
+#define FRICTION2_CONTROL_Pin GPIO_PIN_14
+#define FRICTION2_CONTROL_GPIO_Port GPIOE
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */
