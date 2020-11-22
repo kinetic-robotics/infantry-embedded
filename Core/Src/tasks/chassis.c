@@ -30,9 +30,9 @@
 #include "Configurations/config.h"
 #include "tasks/chassis.h"
 #include "tasks/gimbal.h"
-#include "Configurations/config.h"
 #include "Library/Inc/tool.h"
 #include "Library/Inc/rc.h"
+#include "Library/Inc/motor.h"
 #include "Library/Inc/algorithm/pid.h"
 
 static float globalVx = 0; /* 底盘前后速度,该速度会与用户输入相加 */
@@ -148,9 +148,15 @@ static void Chassis_Task()
 	for (size_t i = 0; i < 4; i++) {
 		motors[i] = Motor_GetMotorData(motorsID[i]);
 	}
+	yawMotor = Motor_GetMotorData(CONFIG_CHASSIS_MOTOR_GIMBAL_YAW);
 	/* 获取遥控器信息 */
 	rc = RC_GetData();
-	yawMotor = Motor_GetMotorData(CONFIG_CHASSIS_MOTOR_GIMBAL_YAW);
+	/* 初始化PID */
+	PID_CREATE_FROM_CONFIG(CHASSIS_RF, &wheelsSpeedPID[0]);
+	PID_CREATE_FROM_CONFIG(CHASSIS_LF, &wheelsSpeedPID[1]);
+	PID_CREATE_FROM_CONFIG(CHASSIS_LB, &wheelsSpeedPID[2]);
+	PID_CREATE_FROM_CONFIG(CHASSIS_RB, &wheelsSpeedPID[3]);
+	PID_CREATE_FROM_CONFIG(CHASSIS_FOLLOW, &chassisFollowPID);
 	while(1) {
 		/* 小陀螺,底盘跟随云台控制 */
 		Chassis_GimbalControl();
@@ -179,13 +185,6 @@ void Chassis_Init()
   	#ifndef CONFIG_GIMBAL_ENABLE
 		return;
   	#endif
-
-	/* 初始化PID */
-	PID_CREATE_FROM_CONFIG(CHASSIS_RF, &wheelsSpeedPID[0]);
-	PID_CREATE_FROM_CONFIG(CHASSIS_LF, &wheelsSpeedPID[1]);
-	PID_CREATE_FROM_CONFIG(CHASSIS_LB, &wheelsSpeedPID[2]);
-	PID_CREATE_FROM_CONFIG(CHASSIS_RB, &wheelsSpeedPID[3]);
-	PID_CREATE_FROM_CONFIG(CHASSIS_FOLLOW, &chassisFollowPID);
 	static osThreadId_t chassisTaskHandle;
 	const osThreadAttr_t chassisTaskAttributes = {
 			.name = "chassisTask",

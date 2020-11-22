@@ -18,7 +18,7 @@
 #include "Library/Inc/motor.h"
 #include "Library/Inc/algorithm/pid.h"
 
-/* middlewares层接口 */
+/* library层接口 */
 static const RC_Info* rc;
 static const IMU_Info* imu;
 /* 云台校准信息 */
@@ -95,6 +95,19 @@ static void Gimbal_Task()
 	uint8_t calibrateFlag = 0;
 	uint8_t step = GIMBAL_FLAG_NOT_CALIBRATE; /* 云台状态Flag */
 	uint16_t calcCount = 0; /* 云台校准稳定后计数,防止云台校准后马上读取imu的值飘动 */
+	/* 获取Library信息 */
+	rc = RC_GetData();
+	imu = IMU_GetData();
+	/* 获取电机信息 */
+	motors[GIMBAL_MOTOR_YAW] = Motor_GetMotorData(CONFIG_GIMBAL_MOTOR_YAW);
+	motors[GIMBAL_MOTOR_PITCH] = Motor_GetMotorData(CONFIG_GIMBAL_MOTOR_PITCH);
+	/* 初始化PID */
+	PID_CREATE_FROM_CONFIG(GIMBAL_SPEED_YAW, &motorSpeedPID[GIMBAL_MOTOR_YAW]);
+	PID_CREATE_FROM_CONFIG(GIMBAL_SPEED_PITCH, &motorSpeedPID[GIMBAL_MOTOR_PITCH]);
+	PID_CREATE_FROM_CONFIG(GIMBAL_POSITION_YAW, &motorPositionPID[GIMBAL_MOTOR_YAW]);
+	PID_CREATE_FROM_CONFIG(GIMBAL_POSITION_PITCH, &motorPositionPID[GIMBAL_MOTOR_PITCH]);
+	PID_CREATE_FROM_CONFIG(GIMBAL_CALIBRATE_YAW, &motorCalibratePID[GIMBAL_MOTOR_YAW]);
+	PID_CREATE_FROM_CONFIG(GIMBAL_CALIBRATE_PITCH, &motorCalibratePID[GIMBAL_MOTOR_PITCH]);
 	/* 读取云台校准信息 */
 	Storage_Read(GIMBAL_CALIBRATION_STORAGE_ID, &calibration, sizeof(calibration));
 	if (calibration.flag == GIMBAL_CALIBRATION_FLAG_OK) {
@@ -165,19 +178,6 @@ void Gimbal_Init()
 	#ifndef CONFIG_GIMBAL_ENABLE
 		return;
 	#endif
-	/* 获取middlewares信息 */
-	rc = RC_GetData();
-	imu = IMU_GetData();
-	/* 获取电机信息 */
-	motors[GIMBAL_MOTOR_YAW] = Motor_GetMotorData(CONFIG_GIMBAL_MOTOR_YAW);
-	motors[GIMBAL_MOTOR_PITCH] = Motor_GetMotorData(CONFIG_GIMBAL_MOTOR_PITCH);
-	/* 设置PID */
-	PID_CREATE_FROM_CONFIG(GIMBAL_SPEED_YAW, &motorSpeedPID[GIMBAL_MOTOR_YAW]);
-	PID_CREATE_FROM_CONFIG(GIMBAL_SPEED_PITCH, &motorSpeedPID[GIMBAL_MOTOR_PITCH]);
-	PID_CREATE_FROM_CONFIG(GIMBAL_POSITION_YAW, &motorPositionPID[GIMBAL_MOTOR_YAW]);
-	PID_CREATE_FROM_CONFIG(GIMBAL_POSITION_PITCH, &motorPositionPID[GIMBAL_MOTOR_PITCH]);
-	PID_CREATE_FROM_CONFIG(GIMBAL_CALIBRATE_YAW, &motorCalibratePID[GIMBAL_MOTOR_YAW]);
-	PID_CREATE_FROM_CONFIG(GIMBAL_CALIBRATE_PITCH, &motorCalibratePID[GIMBAL_MOTOR_PITCH]);
 	static osThreadId_t gimbalTaskHandle;
 	const osThreadAttr_t gimbalTask_attributes = {
 			.name = "gimbalTask",

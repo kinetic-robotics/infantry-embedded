@@ -51,14 +51,21 @@
 #endif
 
 #ifdef CONFIG_MOTOR_ENABLE
-	/* 电机信息数组 */
+	/*
+	 * 电机信息数组
+	 * 如果是CAN电机,则需要有canNum参数, ID为电调ID
+	 * 如果是PWM电机,则只需要ID, ID为PWM引脚ID
+	 */
 	#define CONFIG_MOTOR_INFOS {\
 			{ canNum: CAN_1, id: 1, type: MOTOR_TYPE_RM3508 },\
 			{ canNum: CAN_1, id: 2, type: MOTOR_TYPE_RM3508 },\
 			{ canNum: CAN_1, id: 3, type: MOTOR_TYPE_RM3508 },\
 			{ canNum: CAN_1, id: 4, type: MOTOR_TYPE_RM3508 },\
 			{ canNum: CAN_1, id: 5, type: MOTOR_TYPE_RM6020 },\
-			{ canNum: CAN_2, id: 6, type: MOTOR_TYPE_RM6020 }\
+			{ canNum: CAN_2, id: 6, type: MOTOR_TYPE_RM6020 },\
+			{ 				 id: 1, type: MOTOR_TYPE_RM2312 },\
+			{ 				 id: 2, type: MOTOR_TYPE_RM2312 },\
+			{ canNum: CAN_1, id: 7, type: MOTOR_TYPE_RM2006 },\
 	};
 
 	/* CAN发送频率 */
@@ -98,19 +105,22 @@
 #ifdef CONFIG_DRIVER_GPIO_ENABLE
 	/* GPIO设置 */
 	#define CONFIG_GPIO_INFOS {\
-			{ pin: IMU_NSS_Pin, port: IMU_NSS_GPIO_Port },\
-			{ pin: POWER_1_Pin, port: POWER_1_GPIO_Port }, \
-			{ pin: POWER_2_Pin, port: POWER_2_GPIO_Port }, \
-			{ pin: POWER_3_Pin, port: POWER_3_GPIO_Port }, \
-			{ pin: POWER_4_Pin, port: POWER_4_GPIO_Port } \
+			{ pin: IMU_NSS_Pin, 		  port: IMU_NSS_GPIO_Port 			},\
+			{ pin: POWER_1_Pin, 		  port: POWER_1_GPIO_Port 			},\
+			{ pin: POWER_2_Pin, 		  port: POWER_2_GPIO_Port 			},\
+			{ pin: POWER_3_Pin, 		  port: POWER_3_GPIO_Port 			},\
+			{ pin: POWER_4_Pin, 	 	  port: POWER_4_GPIO_Port 			},\
 	};
 #endif
 
 #ifdef CONFIG_DRIVER_PWM_ENABLE
+	extern TIM_HandleTypeDef htim1;
 	extern TIM_HandleTypeDef htim3;
 	/* PWM输出引脚设置 */
 	#define CONFIG_PWM_INFOS {\
-			{ timer: &htim3, channel: HAL_TIM_ACTIVE_CHANNEL_2 }\
+			{ timer: &htim3, channel: TIM_CHANNEL_1 },\
+			{ timer: &htim1, channel: TIM_CHANNEL_1 },\
+			{ timer: &htim1, channel: TIM_CHANNEL_4 },\
 	};
 #endif
 
@@ -164,7 +174,7 @@
 	#define CONFIG_CAPACITY_CAN_NUM CAN_2
 
 	/* CAN发送频率 */
-	#define CONFIG_CAPACITY_HZ 10
+	#define CONFIG_CAPACITY_HZ 1
 #endif
 
 #endif /* LIBRARY_CONFIG_H_ */
