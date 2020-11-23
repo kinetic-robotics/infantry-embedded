@@ -19,6 +19,7 @@
  */
 void Entry_Task()
 {
+	Library_Init();
 	Global_Init();
 	Chassis_Init();
 	Gimbal_Init();

@@ -24,9 +24,21 @@
 #define CONFIG_DRIVER_UART_ENABLE
 #define CONFIG_DRIVER_PWM_ENABLE
 #define CONFIG_REFEREE_ENABLE
+#define CONFIG_DCT_ENABLE
 
 #include "Library/Inc/drivers/can.h"
 #include "Library/Inc/motor.h"
+
+#ifdef CONFIG_DCT_ENABLE
+	/* 是否启用PID显示	 */
+	#define CONFIG_DCT_PID_ENABLE
+
+	/* 是否启用日记输出 */
+	#define CONFIG_DCT_LOG_ENABLE
+
+	/* PID最大显示数量	 */
+	#define CONFIG_DCT_PID_MAX_LENGTH 8
+#endif
 
 /* CRC模块默认初始值 */
 /* CRC8默认初始值 */
@@ -63,8 +75,8 @@
 			{ canNum: CAN_1, id: 4, type: MOTOR_TYPE_RM3508 },\
 			{ canNum: CAN_1, id: 5, type: MOTOR_TYPE_RM6020 },\
 			{ canNum: CAN_2, id: 6, type: MOTOR_TYPE_RM6020 },\
-			{ 				 id: 1, type: MOTOR_TYPE_RM2312 },\
-			{ 				 id: 2, type: MOTOR_TYPE_RM2312 },\
+			{ 				 id: 1, type: MOTOR_TYPE_BLHEILS },\
+			{ 				 id: 2, type: MOTOR_TYPE_BLHEILS },\
 			{ canNum: CAN_1, id: 7, type: MOTOR_TYPE_RM2006 },\
 	};
 
@@ -146,6 +158,7 @@
 	#define CONFIG_PID_IMU_HEAT_D 0
 	#define CONFIG_PID_IMU_HEAT_MAX_OUTPUT 70
 	#define CONFIG_PID_IMU_HEAT_INTERGRAL_LIMIT 50
+	#define CONFIG_PID_IMU_HEAT_DCT_ENABLE 0
 
 	/* 恒温设定温度 */
 	#define CONFIG_IMU_HEAT_TARGET_TEMP 50
