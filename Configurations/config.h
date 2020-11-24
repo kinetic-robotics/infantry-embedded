@@ -9,6 +9,7 @@
 #define CONFIG_H_
 
 /* 导入其他配置文件 */
+#include "Configurations/shoot.h"
 #include "Configurations/gimbal.h"
 #include "Configurations/chassis.h"
 #include "Configurations/library_config.h"
