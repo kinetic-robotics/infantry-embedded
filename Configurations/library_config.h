@@ -23,6 +23,7 @@
 #define CONFIG_DRIVER_SPI_ENABLE
 #define CONFIG_DRIVER_UART_ENABLE
 #define CONFIG_DRIVER_PWM_ENABLE
+#define CONFIG_DRIVER_USB_ENABLE
 #define CONFIG_REFEREE_ENABLE
 #define CONFIG_DCT_ENABLE
 
@@ -38,6 +39,9 @@
 
 	/* PID最大显示数量	 */
 	#define CONFIG_DCT_PID_MAX_LENGTH 8
+
+	/* DCT包最大大小(含SOF,CMDID等,但不包含末尾CRC8),不能大于0xFFFF */
+	#define DCT_PACKET_MAX_LENGTH 512
 #endif
 
 /* CRC模块默认初始值 */
