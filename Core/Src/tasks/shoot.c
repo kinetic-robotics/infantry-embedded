@@ -8,6 +8,7 @@
 #include "Library/Inc/rc.h"
 #include "Library/Inc/motor.h"
 #include "Library/Inc/algorithm/pid.h"
+#include "Library/Inc/led.h"
 #include "tasks/shoot.h"
 #include "Configurations/config.h"
 
@@ -29,16 +30,15 @@ static void Shoot_FrictionControl()
 		frictionRCFlag = 1;
 	} else if (frictionRCFlag == 1) {
 		/* 切换摩擦轮发射状态 */
-		if (isFrictionEnable) {
-			Motor_Set(CONFIG_SHOOT_MOTOR_FRICTION_L, 0);
-			Motor_Set(CONFIG_SHOOT_MOTOR_FRICTION_R, 0);
-			isFrictionEnable = 0;
-		} else {
-			Motor_Set(CONFIG_SHOOT_MOTOR_FRICTION_L, CONFIG_SHOOT_FRICTION_L_NORMAL_CURRENT);
-			Motor_Set(CONFIG_SHOOT_MOTOR_FRICTION_R, CONFIG_SHOOT_FRICTION_R_NORMAL_CURRENT);
-			isFrictionEnable = 1;
-		}
+		isFrictionEnable = isFrictionEnable ? 0 : 1;
 		frictionRCFlag = 0;
+	}
+	if (isFrictionEnable) {
+		Motor_Set(CONFIG_SHOOT_MOTOR_FRICTION_L, CONFIG_SHOOT_FRICTION_L_NORMAL_CURRENT);
+		Motor_Set(CONFIG_SHOOT_MOTOR_FRICTION_R, CONFIG_SHOOT_FRICTION_R_NORMAL_CURRENT);
+	} else {
+		Motor_Set(CONFIG_SHOOT_MOTOR_FRICTION_L, 0);
+		Motor_Set(CONFIG_SHOOT_MOTOR_FRICTION_R, 0);
 	}
 }
 
@@ -87,6 +87,7 @@ static void Shoot_FireControl()
  */
 static void Shoot_Task()
 {
+	LED_BlinkInfo led; /* LED闪烁结构体 */
 	/* 获取遥控器信息 */
 	rc = RC_GetData();
 	/* 获取拨弹电机信息 */
@@ -96,9 +97,13 @@ static void Shoot_Task()
 	/* 上电关摩擦轮 */
 	Motor_Set(CONFIG_SHOOT_MOTOR_FRICTION_L, 0);
 	Motor_Set(CONFIG_SHOOT_MOTOR_FRICTION_R, 0);
+	/* 初始化LED */
+	LED_BlinkInit(&led, CONFIG_SHOOT_LED_PIN, CONFIG_SHOOT_LED_DELAY);
 	while(1) {
 		Shoot_FrictionControl();
 		Shoot_FireControl();
+		/* 闪烁LED */
+		LED_Blink(&led);
 		osDelay(10);
 	}
 }

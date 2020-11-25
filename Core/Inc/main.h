@@ -70,10 +70,26 @@ void Error_Handler(void);
 #define POWER_2_GPIO_Port GPIOH
 #define POWER_3_Pin GPIO_PIN_4
 #define POWER_3_GPIO_Port GPIOH
+#define LED1_Pin GPIO_PIN_8
+#define LED1_GPIO_Port GPIOG
 #define POWER_4_Pin GPIO_PIN_5
 #define POWER_4_GPIO_Port GPIOH
+#define LED2_Pin GPIO_PIN_7
+#define LED2_GPIO_Port GPIOG
+#define LED3_Pin GPIO_PIN_6
+#define LED3_GPIO_Port GPIOG
 #define IMU_NSS_Pin GPIO_PIN_6
 #define IMU_NSS_GPIO_Port GPIOF
+#define LED4_Pin GPIO_PIN_5
+#define LED4_GPIO_Port GPIOG
+#define LED5_Pin GPIO_PIN_4
+#define LED5_GPIO_Port GPIOG
+#define LED6_Pin GPIO_PIN_3
+#define LED6_GPIO_Port GPIOG
+#define LED7_Pin GPIO_PIN_2
+#define LED7_GPIO_Port GPIOG
+#define LED8_Pin GPIO_PIN_1
+#define LED8_GPIO_Port GPIOG
 #define FRICTION2_CONTROL_Pin GPIO_PIN_14
 #define FRICTION2_CONTROL_GPIO_Port GPIOE
 /* USER CODE BEGIN Private defines */

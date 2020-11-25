@@ -9,7 +9,12 @@
 #define CHASSIS_H_
 
 /* 任务是否启用设置 */
-//#define CONFIG_CHASSIS_ENABLE
+#define CONFIG_CHASSIS_ENABLE
+
+/* 云台LED闪烁延时,单位毫秒 */
+#define CONFIG_CHASSIS_LED_DELAY 100
+/* 云台LED引脚编号 */
+#define CONFIG_CHASSIS_LED_PIN CONFIG_LED_PIN_1
 
 /* 底盘轮距(mm) */
 #define CONFIG_CHASSIS_WHEELTRACK     353

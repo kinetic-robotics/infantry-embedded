@@ -33,6 +33,7 @@
 #include "Library/Inc/tool.h"
 #include "Library/Inc/rc.h"
 #include "Library/Inc/motor.h"
+#include "Library/Inc/led.h"
 #include "Library/Inc/algorithm/pid.h"
 
 static float globalVx = 0; /* 底盘前后速度,该速度会与用户输入相加 */
@@ -144,6 +145,7 @@ static void Chassis_Task()
 			CONFIG_CHASSIS_MOTOR_RB
 	};
 	const Motor_Info* motors[4];
+	LED_BlinkInfo led; /* LED闪烁结构体 */
 	/* 获取电机信息 */
 	for (size_t i = 0; i < 4; i++) {
 		motors[i] = Motor_GetMotorData(motorsID[i]);
@@ -151,6 +153,8 @@ static void Chassis_Task()
 	yawMotor = Motor_GetMotorData(CONFIG_CHASSIS_MOTOR_GIMBAL_YAW);
 	/* 获取遥控器信息 */
 	rc = RC_GetData();
+	/* 初始化LED */
+	LED_BlinkInit(&led, CONFIG_CHASSIS_LED_PIN, CONFIG_CHASSIS_LED_DELAY);
 	/* 初始化PID */
 	PID_CREATE_FROM_CONFIG(CHASSIS_RF, &wheelsSpeedPID[0]);
 	PID_CREATE_FROM_CONFIG(CHASSIS_LF, &wheelsSpeedPID[1]);
@@ -173,6 +177,8 @@ static void Chassis_Task()
 			motorsCurrent[i] = PID_Calc(&wheelsSpeedPID[i], motors[i]->speedRpm, motorsSpeedTarget[i]);
 			Motor_Set(motorsID[i], motorsCurrent[i]);
 		}
+		/* 闪烁LED */
+		LED_Blink(&led);
 		osDelay(10);
   }
 }
@@ -182,7 +188,7 @@ static void Chassis_Task()
  */
 void Chassis_Init()
 {
-  	#ifndef CONFIG_GIMBAL_ENABLE
+  	#ifndef CONFIG_CHASSIS_ENABLE
 		return;
   	#endif
 	static osThreadId_t chassisTaskHandle;

@@ -11,6 +11,11 @@
 /* 任务是否启用设置 */
 #define CONFIG_SHOOT_ENABLE
 
+/* 云台LED闪烁延时,单位毫秒 */
+#define CONFIG_SHOOT_LED_DELAY 100
+/* 云台LED引脚编号 */
+#define CONFIG_SHOOT_LED_PIN CONFIG_LED_PIN_3
+
 /**
  * 电机ID配置,这里的ID并非是电调ID,而是电机信息数组的index
  * FRICTION_L: 左摩擦轮电机
