@@ -9,7 +9,12 @@
 #define GIMBAL_H_
 
 /* 任务是否启用设置 */
-//#define CONFIG_GIMBAL_ENABLE
+#define CONFIG_GIMBAL_ENABLE
+
+/* 云台LED闪烁延时,单位毫秒 */
+#define CONFIG_GIMBAL_LED_DELAY 100
+/* 云台LED引脚编号 */
+#define CONFIG_GIMBAL_LED_PIN CONFIG_LED_PIN_2
 
 /* 云台遥控器PITCH限制,单位为度 */
 #define CONFIG_GIMBAL_RC_PITCH_MIN_ANGLE -45

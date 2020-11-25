@@ -26,9 +26,22 @@
 #define CONFIG_DRIVER_USB_ENABLE
 #define CONFIG_REFEREE_ENABLE
 #define CONFIG_DCT_ENABLE
+#define CONFIG_LED_ENABLE
 
 #include "Library/Inc/drivers/can.h"
 #include "Library/Inc/motor.h"
+
+#ifdef CONFIG_LED_ENABLE
+	/* LED引脚号 */
+	#define CONFIG_LED_PIN_1 5
+	#define CONFIG_LED_PIN_2 6
+	#define CONFIG_LED_PIN_3 7
+	#define CONFIG_LED_PIN_4 8
+	#define CONFIG_LED_PIN_5 9
+	#define CONFIG_LED_PIN_6 10
+	#define CONFIG_LED_PIN_7 11
+	#define CONFIG_LED_PIN_8 12
+#endif
 
 #ifdef CONFIG_DCT_ENABLE
 	/* 是否启用PID显示	 */
@@ -105,6 +118,9 @@
 #ifdef CONFIG_RC_ENABLE
 	/* 遥控器UART编号 */
 	#define CONFIG_RC_UART 0
+
+	/* 遥控器状态LED */
+	#define CONFIG_RC_LED CONFIG_LED_PIN_4
 #endif
 
 
@@ -126,6 +142,14 @@
 			{ pin: POWER_2_Pin, 		  port: POWER_2_GPIO_Port 			},\
 			{ pin: POWER_3_Pin, 		  port: POWER_3_GPIO_Port 			},\
 			{ pin: POWER_4_Pin, 	 	  port: POWER_4_GPIO_Port 			},\
+			{ pin: LED1_Pin, 		  port: LED1_GPIO_Port 			},\
+			{ pin: LED2_Pin, 		  port: LED2_GPIO_Port 			},\
+			{ pin: LED3_Pin, 		  port: LED3_GPIO_Port 			},\
+			{ pin: LED4_Pin, 		  port: LED4_GPIO_Port 			},\
+			{ pin: LED5_Pin, 	 	  port: LED5_GPIO_Port 			},\
+			{ pin: LED6_Pin, 		  port: LED6_GPIO_Port 			},\
+			{ pin: LED7_Pin, 		  port: LED7_GPIO_Port 			},\
+			{ pin: LED8_Pin, 		  port: LED8_GPIO_Port 			},\
 	};
 #endif
 

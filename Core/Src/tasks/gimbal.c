@@ -16,6 +16,7 @@
 #include "Library/Inc/tool.h"
 #include "Library/Inc/rc.h"
 #include "Library/Inc/motor.h"
+#include "Library/Inc/led.h"
 #include "Library/Inc/algorithm/pid.h"
 
 /* library层接口 */
@@ -95,9 +96,12 @@ static void Gimbal_Task()
 	uint8_t calibrateFlag = 0;
 	uint8_t step = GIMBAL_FLAG_NOT_CALIBRATE; /* 云台状态Flag */
 	uint16_t calcCount = 0; /* 云台校准稳定后计数,防止云台校准后马上读取imu的值飘动 */
+	LED_BlinkInfo led; /* LED闪烁结构体 */
 	/* 获取Library信息 */
 	rc = RC_GetData();
 	imu = IMU_GetData();
+	/* 初始化LED */
+	LED_BlinkInit(&led, CONFIG_GIMBAL_LED_PIN, CONFIG_GIMBAL_LED_DELAY);
 	/* 获取电机信息 */
 	motors[GIMBAL_MOTOR_YAW] = Motor_GetMotorData(CONFIG_GIMBAL_MOTOR_YAW);
 	motors[GIMBAL_MOTOR_PITCH] = Motor_GetMotorData(CONFIG_GIMBAL_MOTOR_PITCH);
@@ -166,6 +170,8 @@ static void Gimbal_Task()
 		/* 发送指令给电调 */
 		Motor_Set(CONFIG_GIMBAL_MOTOR_YAW, motorsCurrent[GIMBAL_MOTOR_YAW]);
 		Motor_Set(CONFIG_GIMBAL_MOTOR_PITCH, motorsCurrent[GIMBAL_MOTOR_PITCH]);
+		/* 闪烁LED */
+		LED_Blink(&led);
 		osDelay(1);
 	}
 }
