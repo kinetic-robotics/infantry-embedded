@@ -33,6 +33,7 @@ static PID_Info motorPositionPID[2]; /* 电机角度环,单位为度 */
 static PID_Info motorCalibratePID[2];/* 电机校准位置环,是电机编码器值 */
 static int16_t motorsCurrent[2]; /* 电机电流 */
 
+
 /**
  * 云台校准函数
  */
