@@ -23,9 +23,7 @@
 #define CONFIG_DRIVER_SPI_ENABLE
 #define CONFIG_DRIVER_UART_ENABLE
 #define CONFIG_DRIVER_PWM_ENABLE
-#define CONFIG_DRIVER_USB_ENABLE
 #define CONFIG_REFEREE_ENABLE
-#define CONFIG_DCT_ENABLE
 #define CONFIG_LED_ENABLE
 
 #include "Library/Inc/drivers/can.h"
@@ -41,20 +39,6 @@
 	#define CONFIG_LED_PIN_6 10
 	#define CONFIG_LED_PIN_7 11
 	#define CONFIG_LED_PIN_8 12
-#endif
-
-#ifdef CONFIG_DCT_ENABLE
-	/* 是否启用PID显示	 */
-	#define CONFIG_DCT_PID_ENABLE
-
-	/* 是否启用日记输出 */
-	#define CONFIG_DCT_LOG_ENABLE
-
-	/* PID最大显示数量	 */
-	#define CONFIG_DCT_PID_MAX_LENGTH 8
-
-	/* DCT包最大大小(含SOF,CMDID等,但不包含末尾CRC8),不能大于0xFFFF */
-	#define DCT_PACKET_MAX_LENGTH 512
 #endif
 
 /* CRC模块默认初始值 */
@@ -186,7 +170,6 @@
 	#define CONFIG_PID_IMU_HEAT_D 0
 	#define CONFIG_PID_IMU_HEAT_MAX_OUTPUT 70
 	#define CONFIG_PID_IMU_HEAT_INTERGRAL_LIMIT 50
-	#define CONFIG_PID_IMU_HEAT_DCT_ENABLE 0
 
 	/* 恒温设定温度 */
 	#define CONFIG_IMU_HEAT_TARGET_TEMP 50
