@@ -49,8 +49,8 @@ static void Shoot_FireControl()
 {
 	float setSpeed;       /* 拨弹电机设定速度 */
 	uint8_t isEnable = 0; /* 拨弹电机是否开启 */
-	/* 左开关向下打开拨弹电机 */
-	if (rc->sw1 == 2) {
+	/* 左开关向下或左键打开拨弹电机 */
+	if (rc->sw1 == 2 || rc->mouse.l) {
 		/* 手动开启拨弹电机连发模式 */
 		setSpeed = CONFIG_SHOOT_FIRE_SPEED;
 		isEnable = 1;
@@ -120,7 +120,7 @@ void Shoot_Init()
 	static osThreadId_t shootTaskHandle;
 	const osThreadAttr_t shootTaskAttributes = {
 			.name = "shootTask",
-			.priority = (osPriority_t) osPriorityHigh,
+			.priority = (osPriority_t) osPriorityNormal,
 			.stack_size = 128 * 4
 	};
 	shootTaskHandle = osThreadNew(Shoot_Task, NULL, &shootTaskAttributes);

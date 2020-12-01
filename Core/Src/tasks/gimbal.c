@@ -78,7 +78,6 @@ static void Gimbal_ParseRCData()
 {
 	targetYawAngle   += -rc->ch3 / RC_MAX_VALUE * CONFIG_GIMBAL_RC_YAW_SPEED;  /* 云台pitch增速 */
 	targetPitchAngle +=  rc->ch4 / RC_MAX_VALUE * CONFIG_GIMBAL_RC_PITCH_SPEED;/* 云台yaw增速 */
-	//TOOL_LIMIT(targetYawAngle, GIMBAL_RC_YAW_MIN_ANGLE, GIMBAL_RC_YAW_MAX_ANGLE);
 	/* 遥控器信号超过+-360时处理一下 */
 	if (targetYawAngle >= 360) {
 		targetYawAngle = targetYawAngle - 360;
@@ -160,6 +159,9 @@ static void Gimbal_Task()
 			case GIMBAL_FLAG_BACK_CALIBRATE:
 				offsetYawAngle = imu->yaw;
 				offsetPitchAngle = imu->pit;
+				/* 重置目标位置 */
+				targetPitchAngle = 0;
+				targetYawAngle = 0;
 				step = GIMBAL_FLAG_RUNNING;
 				break;
 			case GIMBAL_FLAG_RUNNING:
@@ -187,7 +189,7 @@ void Gimbal_Init()
 	static osThreadId_t gimbalTaskHandle;
 	const osThreadAttr_t gimbalTask_attributes = {
 			.name = "gimbalTask",
-			.priority = (osPriority_t) osPriorityHigh,
+			.priority = (osPriority_t) osPriorityNormal,
 			.stack_size = 128 * 4
 	};
 	gimbalTaskHandle = osThreadNew(Gimbal_Task, NULL, &gimbalTask_attributes);
