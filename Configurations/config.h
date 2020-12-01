@@ -8,6 +8,9 @@
 #ifndef CONFIG_H_
 #define CONFIG_H_
 
+/* 是否启用SystemView */
+#define CONFIG_SYSTEMVIEW_ENABLE 1
+
 /* 导入其他配置文件 */
 #include "Configurations/shoot.h"
 #include "Configurations/gimbal.h"

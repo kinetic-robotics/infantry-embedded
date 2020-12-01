@@ -34,6 +34,7 @@
 #include "Library/Inc/rc.h"
 #include "Library/Inc/motor.h"
 #include "Library/Inc/led.h"
+#include "Library/Inc/capacity.h"
 #include "Library/Inc/algorithm/pid.h"
 
 static float globalVx = 0; /* 底盘前后速度,该速度会与用户输入相加 */
@@ -41,10 +42,13 @@ static float globalVy = 0; /* 底盘左右速度,该速度会与用户输入相�
 static float globalVw = 0; /* 底盘旋转速度,该速度会与用户输入相加 */
 static PID_Info wheelsSpeedPID[4]; /* 底盘速度环 */
 static PID_Info chassisFollowPID;  /* 底盘跟随云台位置环 */
+static PID_Info powerLimitPID;     /* 底盘功率限制环 */
 static uint8_t controlMode = CHASSIS_MODE_CHASSIS_FOLLOW; /* 底盘控制模式,可取值为CHASSIS_MODE_ */
 static uint16_t chassisFolloweYawEcd; /* 底盘跟随云台时的yaw角度 */
 static const Motor_Info* yawMotor; /* yaw轴电机信息 */
-const RC_Info* rc; /* 遥控器信息 */
+static const RC_Info* rc; /* 遥控器信息 */
+static const Capacity_Info* capacity; /* 超级电容模组信息 */
+static int16_t motorsSpeedTarget[4]; /* 底盘电机期望转速(rpm) */
 
 /**
  * 底盘的运动分解计算
@@ -132,11 +136,25 @@ void Chassis_SetChassisFolloweYawEcd(uint32_t ecd)
 }
 
 /**
+ * 底盘功率限制
+ */
+void Chassis_PowerLimit()
+{
+	float zoom = CONFIG_CHASSIS_POWER_LIMIT_LEVEL_DEFAULT;
+	if (capacity->state == CAPACITY_OK) {
+		zoom = PID_Calc(&powerLimitPID, capacity->capVoltage, 0);
+	}
+	motorsSpeedTarget[0] *= zoom;
+	motorsSpeedTarget[1] *= zoom;
+	motorsSpeedTarget[2] *= zoom;
+	motorsSpeedTarget[3] *= zoom;
+}
+
+/**
  * 底盘任务
  */
 static void Chassis_Task()
 {
-	int16_t motorsSpeedTarget[4]; /* 底盘电机期望转速(rpm) */
 	int16_t motorsCurrent[4]; /* 底盘电机电流 */
 	const uint8_t motorsID[4] = {
 			CONFIG_CHASSIS_MOTOR_RF,
@@ -153,14 +171,19 @@ static void Chassis_Task()
 	yawMotor = Motor_GetMotorData(CONFIG_CHASSIS_MOTOR_GIMBAL_YAW);
 	/* 获取遥控器信息 */
 	rc = RC_GetData();
+	/* 获取超级电容信息 */
+	capacity = Capacity_GetData();
 	/* 初始化LED */
 	LED_BlinkInit(&led, CONFIG_CHASSIS_LED_PIN, CONFIG_CHASSIS_LED_DELAY);
+	/* 设置超级电容默认功率 */
+	Capacity_SetPower(CONFIG_CHASSIS_CAPACITY_POWER_DEFAULT);
 	/* 初始化PID */
 	PID_CREATE_FROM_CONFIG(CHASSIS_RF, &wheelsSpeedPID[0]);
 	PID_CREATE_FROM_CONFIG(CHASSIS_LF, &wheelsSpeedPID[1]);
 	PID_CREATE_FROM_CONFIG(CHASSIS_LB, &wheelsSpeedPID[2]);
 	PID_CREATE_FROM_CONFIG(CHASSIS_RB, &wheelsSpeedPID[3]);
 	PID_CREATE_FROM_CONFIG(CHASSIS_FOLLOW, &chassisFollowPID);
+	PID_CREATE_FROM_CONFIG(CHASSIS_POWER_LIMIT, &powerLimitPID);
 	while(1) {
 		/* 小陀螺,底盘跟随云台控制 */
 		Chassis_GimbalControl();
@@ -171,6 +194,9 @@ static void Chassis_Task()
 
 		/* 底盘速度分解，计算底盘电机转速 */
 		Chassis_SpeedCalc(vx, vy, vw, motorsSpeedTarget);
+
+		/* 功率闭环 */
+		Chassis_PowerLimit();
 
 		/* 闭环PID控制,并将计算好的电流值发送给电调 */
 		for (size_t i = 0; i < 4; i++) {
@@ -194,7 +220,7 @@ void Chassis_Init()
 	static osThreadId_t chassisTaskHandle;
 	const osThreadAttr_t chassisTaskAttributes = {
 			.name = "chassisTask",
-			.priority = (osPriority_t) osPriorityHigh,
+			.priority = (osPriority_t) osPriorityNormal,
 			.stack_size = 128 * 4
 	};
 	chassisTaskHandle = osThreadNew(Chassis_Task, NULL, &chassisTaskAttributes);

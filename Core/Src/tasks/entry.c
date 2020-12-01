@@ -24,6 +24,9 @@ void Entry_Task()
 	Chassis_Init();
 	Gimbal_Init();
 	Shoot_Init();
-	/* 安全退出任务 */
-	vTaskDelete(NULL);
+	/* 为了防止通过本任务初始化的内存被释放,使用任务暂停而不是删除 */
+	while (1) {
+		vTaskSuspend(NULL);
+	}
+
 }

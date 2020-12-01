@@ -89,14 +89,11 @@
 	extern UART_HandleTypeDef huart1;
 	extern UART_HandleTypeDef huart3;
 
-	/* 串口配置, bufferLength不可大于UART_BUFFER_MAX_LENGTH */
+	/* 串口配置 */
 	#define CONFIG_UART_INFOS {\
 			{ huart: &huart1, bufferLength: 18 },\
 			{ huart: &huart3, bufferLength: 512 }\
 	};
-
-	/* 串口最大Buffer设置 */
-	#define CONFIG_UART_BUFFER_MAX_LENGTH 512
 #endif
 
 #ifdef CONFIG_RC_ENABLE
@@ -195,10 +192,16 @@
 
 #ifdef CONFIG_CAPACITY_ENABLE
 	/* 超级电容挂载CAN编号 */
-	#define CONFIG_CAPACITY_CAN_NUM CAN_2
+	#define CONFIG_CAPACITY_CAN_NUM CAN_1
 
 	/* CAN发送频率 */
 	#define CONFIG_CAPACITY_HZ 1
+
+	/* 超级电容状态LED */
+	#define CONFIG_CAPACITY_LED CONFIG_LED_PIN_5
+
+	/* 超级电容默认功率 */
+	#define CONFIG_CAPACITY_DEFAULT_POWER 35
 #endif
 
 #endif /* LIBRARY_CONFIG_H_ */
